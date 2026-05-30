@@ -24,11 +24,8 @@ MODEL_LOAD_LOG_MSG = [
 ]
 
 MODEL_ERROR_LOG_MSGS = [
-    "INFO:     Application shutdown complete.",
-    "INFO: Application shutdown complete.",
     "Traceback (most recent call last):",
     "Initialization failed. warmup error: Traceback (most recent call last):",
-    "Waiting for application shutdown."
 ]
 
 MODEL_INFO_LOG_MSGS = [
@@ -85,7 +82,7 @@ worker_config = WorkerConfig(
                 # Use our generator to produce payloads
                 generator=completions_benchmark_generator,
                 runs=8,
-                concurrency=10,
+                concurrency=8,
             ),
         ),
 
