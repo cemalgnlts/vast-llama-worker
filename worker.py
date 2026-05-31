@@ -42,7 +42,7 @@ WORD_LIST = nltk.corpus.words.words()
 
 def completions_benchmark_generator() -> dict:
     """Generate one benchmark payload for the /v1/completions endpoint.
-    This shape should match what your vLLM server expects.
+    This shape should match what your llama server expects.
     """
     prompt = " ".join(random.choices(WORD_LIST, k=int(250)))
     model = os.environ.get("MODEL_NAME")
