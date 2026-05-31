@@ -14,13 +14,13 @@ from vastai import (
 # --- Model configuration ------------------------------------------------------
 
 MODEL_SERVER_URL  = "http://127.0.0.1"
-MODEL_SERVER_PORT = 1800
-MODEL_LOG_FILE    = "/var/log/portal/model.log"
+MODEL_SERVER_PORT = int(os.environ.get("LLAMA_ARG_PORT", 5000))
+MODEL_LOG_FILE    = os.environ.get("MODEL_LOG", "/var/log/portal/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = "/health"
 
-# vLLM-specific log messages
+# llama-specific log messages
 MODEL_LOAD_LOG_MSG = [
-        "llama_server: model loaded"
+    "llama_server: model loaded"
 ]
 
 MODEL_ERROR_LOG_MSGS = [
@@ -29,9 +29,9 @@ MODEL_ERROR_LOG_MSGS = [
 ]
 
 MODEL_INFO_LOG_MSGS = [
-        "llama_server: loading model",
-        "load_model: speculative decoding will use checkpoints",
-        "update_slots: all slots are idle"
+    "llama_server: loading model",
+    "load_model: speculative decoding will use checkpoints",
+    "update_slots: all slots are idle"
 ]
 
 # --- Benchmark data generation -----------------------------------------------
@@ -45,8 +45,8 @@ def completions_benchmark_generator() -> dict:
     This shape should match what your vLLM server expects.
     """
     prompt = " ".join(random.choices(WORD_LIST, k=int(250)))
-
     model = os.environ.get("MODEL_NAME")
+
     if not model:
         raise ValueError("MODEL_NAME environment variable not set")
 
@@ -68,30 +68,22 @@ worker_config = WorkerConfig(
         # /v1/completions: also used as the benchmark handler
         HandlerConfig(
             route="/v1/completions",
-
-            # Allow vLLM to schedule parallel requests internally
-            allow_parallel_requests=True,
-
-            # Maximum time a request may sit in any internal queue before being rejected
-            max_queue_time=60.0,
-
-            # Workload: use max_tokens as a simple cost proxy
             workload_calculator=lambda payload: float(payload.get("max_tokens", 0)),
-
+            allow_parallel_requests=True,
+            max_queue_time=60.0,
             benchmark_config=BenchmarkConfig(
-                # Use our generator to produce payloads
                 generator=completions_benchmark_generator,
-                runs=8,
                 concurrency=8,
+                runs=2,
             ),
         ),
 
         # /v1/chat/completions: similar behavior but no benchmark_config
         HandlerConfig(
             route="/v1/chat/completions",
+            workload_calculator=lambda payload: float(payload.get("max_tokens", 0)),
             allow_parallel_requests=True,
             max_queue_time=60.0,
-            workload_calculator=lambda payload: float(payload.get("max_tokens", 0)),
         ),
     ],
 
@@ -104,7 +96,3 @@ worker_config = WorkerConfig(
 
 # Run the worker synchronously
 Worker(worker_config).run()
-
-# Or run asynchronously if you need to do other Python work:
-# import asyncio
-# asyncio.run(Worker(worker_config).run_async())
