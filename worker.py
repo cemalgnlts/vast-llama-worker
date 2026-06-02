@@ -24,6 +24,8 @@ MODEL_LOAD_LOG_MSG = [
 MODEL_ERROR_LOG_MSGS = [
     "Traceback (most recent call last):",
     "Initialization failed. warmup error: Traceback (most recent call last):",
+    "common_fit_params: failed to fit params to free device memory: n_gpu_layers already set by user to 99, abort",
+    "llama_init_from_model: failed to initialize the context: failed to allocate buffer for kv cache"
 ]
 
 MODEL_INFO_LOG_MSGS = [
