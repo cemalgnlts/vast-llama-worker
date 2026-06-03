@@ -13,7 +13,7 @@ from vastai import (
 
 MODEL_SERVER_URL  = "http://127.0.0.1"
 MODEL_SERVER_PORT = int(os.environ.get("LLAMA_ARG_PORT", 5000))
-MODEL_LOG_FILE    = os.environ.get("MODEL_LOG", "/var/log/portal/model.log")
+MODEL_LOG_FILE    = os.environ.get("MODEL_LOG", "/var/log/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = "/health"
 
 # llama-specific log messages
@@ -24,8 +24,9 @@ MODEL_LOAD_LOG_MSG = [
 MODEL_ERROR_LOG_MSGS = [
     "Traceback (most recent call last):",
     "Initialization failed. warmup error: Traceback (most recent call last):",
-    "common_fit_params: failed to fit params to free device memory: n_gpu_layers already set by user to 99, abort",
-    "llama_init_from_model: failed to initialize the context: failed to allocate buffer for kv cache"
+    "llama_init_from_model: failed to initialize the context: failed to allocate buffer for kv cache",
+    "llama_server: exiting due to model loading error",
+    "llama_model_load_from_file_impl: failed to load model"
 ]
 
 MODEL_INFO_LOG_MSGS = [
