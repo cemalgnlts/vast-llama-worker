@@ -26,7 +26,8 @@ MODEL_ERROR_LOG_MSGS = [
     "Initialization failed. warmup error: Traceback (most recent call last):",
     "llama_init_from_model: failed to initialize the context: failed to allocate buffer for kv cache",
     "llama_server: exiting due to model loading error",
-    "llama_model_load_from_file_impl: failed to load model"
+    "llama_model_load_from_file_impl: failed to load model",
+    "CUDA error: CUDA-capable device(s) is/are busy or unavailable"
 ]
 
 MODEL_INFO_LOG_MSGS = [
