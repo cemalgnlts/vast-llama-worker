@@ -27,13 +27,16 @@ MODEL_ERROR_LOG_MSGS = [
     "llama_init_from_model: failed to initialize the context: failed to allocate buffer for kv cache",
     "llama_server: exiting due to model loading error",
     "llama_model_load_from_file_impl: failed to load model",
-    "CUDA error: CUDA-capable device(s) is/are busy or unavailable"
+    "CUDA error: CUDA-capable device(s) is/are busy or unavailable",
+    "ggml_cuda_init: failed to initialize CUDA: forward compatibility was attempted on non supported HW",
+    "failed to download model from Hugging Face"
 ]
 
 MODEL_INFO_LOG_MSGS = [
     "llama_server: loading model",
     "load_model: speculative decoding will use checkpoints",
-    "update_slots: all slots are idle"
+    "update_slots: all slots are idle",
+    "slot print_timing"
 ]
 
 # --- Benchmark data generation -----------------------------------------------
