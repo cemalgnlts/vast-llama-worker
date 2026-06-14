@@ -15,6 +15,7 @@ MODEL_SERVER_URL  = "http://127.0.0.1"
 MODEL_SERVER_PORT = int(os.environ.get("LLAMA_ARG_PORT", 5000))
 MODEL_LOG_FILE    = os.environ.get("MODEL_LOG", "/var/log/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = "/health"
+N_SLOTS = int(os.environ.get("LLAMA_ARG_N_PARALLEL", 4))
 
 # llama-specific log messages
 MODEL_LOAD_LOG_MSG = [
@@ -28,8 +29,7 @@ MODEL_ERROR_LOG_MSGS = [
     "llama_server: exiting due to model loading error",
     "llama_model_load_from_file_impl: failed to load model",
     "CUDA error: CUDA-capable device(s) is/are busy or unavailable",
-    "ggml_cuda_init: failed to initialize CUDA: forward compatibility was attempted on non supported HW",
-    "failed to download model from Hugging Face"
+    "ggml_cuda_init: failed to initialize CUDA: forward compatibility was attempted on non supported HW"
 ]
 
 MODEL_INFO_LOG_MSGS = [
@@ -372,12 +372,12 @@ worker_config = WorkerConfig(
         # /v1/completions: also used as the benchmark handler
         HandlerConfig(
             route="/v1/completions",
-            workload_calculator=lambda payload: float(payload.get("max_tokens", 0)),
+            workload_calculator=lambda payload: float(payload.get("max_tokens", 256)),
             allow_parallel_requests=True,
             max_queue_time=60.0,
             benchmark_config=BenchmarkConfig(
                 generator=completions_benchmark_generator,
-                concurrency=4,
+                concurrency=N_SLOTS,
                 runs=2,
             ),
         ),
@@ -385,7 +385,7 @@ worker_config = WorkerConfig(
         # /v1/chat/completions: similar behavior but no benchmark_config
         HandlerConfig(
             route="/v1/chat/completions",
-            workload_calculator=lambda payload: float(payload.get("max_tokens", 0)),
+            workload_calculator=lambda payload: float(payload.get("max_tokens", 256)),
             allow_parallel_requests=True,
             max_queue_time=60.0,
         ),
