@@ -12,10 +12,11 @@ from vastai import (
 # --- Model configuration ------------------------------------------------------
 
 MODEL_SERVER_URL  = "http://127.0.0.1"
-MODEL_SERVER_PORT = int(os.environ.get("LLAMA_ARG_PORT", 5000))
-MODEL_LOG_FILE    = os.environ.get("MODEL_LOG", "/var/log/model.log")
+MODEL_SERVER_PORT = int(os.getenv("LLAMA_ARG_PORT", 5000))
+MODEL_LOG_FILE    = os.getenv("MODEL_LOG", "/var/log/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = "/health"
-N_SLOTS = int(os.environ.get("LLAMA_ARG_N_PARALLEL", 4))
+N_SLOTS = int(os.getenv("LLAMA_ARG_N_PARALLEL", 4))
+WORKLOAD_PER_REQ = float(os.getenv("WORKLOAD_PER_REQ", 25.0))
 
 # llama-specific log messages
 MODEL_LOAD_LOG_MSG = [
@@ -372,7 +373,7 @@ worker_config = WorkerConfig(
         # /v1/completions: also used as the benchmark handler
         HandlerConfig(
             route="/v1/completions",
-            workload_calculator=lambda payload: float(payload.get("max_tokens", 256)),
+            workload_calculator=lambda payload: WORKLOAD_PER_REQ,
             allow_parallel_requests=True,
             max_queue_time=60.0,
             benchmark_config=BenchmarkConfig(
@@ -385,7 +386,7 @@ worker_config = WorkerConfig(
         # /v1/chat/completions: similar behavior but no benchmark_config
         HandlerConfig(
             route="/v1/chat/completions",
-            workload_calculator=lambda payload: float(payload.get("max_tokens", 256)),
+            workload_calculator=lambda payload: WORKLOAD_PER_REQ,
             allow_parallel_requests=True,
             max_queue_time=60.0,
         ),
