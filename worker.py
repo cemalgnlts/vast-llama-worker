@@ -346,7 +346,8 @@ WORD_LIST = [
 ]
 
 def completions_benchmark_generator() -> dict:
-    """Generate one benchmark payload for the /v1/completions endpoint.
+    """
+    Generate one benchmark payload for the /v1/completions endpoint.
     This shape should match what your llama server expects.
     """
     prompt = " ".join(random.choices(WORD_LIST, k=int(200)))
@@ -364,6 +365,20 @@ def completions_benchmark_generator() -> dict:
 
 # --- Worker configuration -----------------------------------------------------
 
+def llm_workload(payload: dict) -> float:
+    prompt = payload.get("prompt", "")
+    max_tokens = payload.get("max_tokens", 0)
+    prompt_tokens = len(prompt) / 4.0
+    workload = prompt_tokens + max_tokens
+
+    print("=== Got payload ===")
+    print(payload)
+    print("workload", workload)
+    print("=== ===")
+
+    return workload
+
+
 worker_config = WorkerConfig(
     model_server_url=MODEL_SERVER_URL,
     model_server_port=MODEL_SERVER_PORT,
@@ -373,7 +388,7 @@ worker_config = WorkerConfig(
         # /v1/completions: also used as the benchmark handler
         HandlerConfig(
             route="/v1/completions",
-            workload_calculator=lambda payload: WORKLOAD_PER_REQ,
+            workload_calculator=llm_workload,
             allow_parallel_requests=True,
             max_queue_time=60.0,
             benchmark_config=BenchmarkConfig(
@@ -386,7 +401,7 @@ worker_config = WorkerConfig(
         # /v1/chat/completions: similar behavior but no benchmark_config
         HandlerConfig(
             route="/v1/chat/completions",
-            workload_calculator=lambda payload: WORKLOAD_PER_REQ,
+            workload_calculator=llm_workload,
             allow_parallel_requests=True,
             max_queue_time=60.0,
         ),
