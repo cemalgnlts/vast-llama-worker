@@ -359,24 +359,30 @@ def completions_benchmark_generator() -> dict:
     return {
         "model": model,
         "prompt": prompt,
-        "temperature": 0.7,
         "max_tokens": 256,
     }
 
 # --- Worker configuration -----------------------------------------------------
 
 def llm_workload(payload: dict) -> float:
+    # /v1/completions
     prompt = payload.get("prompt", "")
-    max_tokens = payload.get("max_tokens", 0)
     prompt_tokens = len(prompt) / 4.0
-    workload = prompt_tokens + max_tokens
 
-    print("=== Got payload ===")
-    print(payload)
-    print("workload", workload)
-    print("=== ===")
+    # /v1/chat/completions
+    messages = payload.get("messages", [])
+    for message in messages:
+        content = message.get("content", "")
+        if isinstance(content, str):
+            prompt_tokens += len(content) / 4.0
+        elif isinstance(content, list):  # multimodal content array
+            for part in content:
+                if part.get("type") == "text":
+                    prompt_tokens += len(part.get("text", "")) / 4.0
 
-    return workload
+    max_tokens = float(payload.get("max_tokens", 256))
+
+    return prompt_tokens + max_tokens
 
 
 worker_config = WorkerConfig(
