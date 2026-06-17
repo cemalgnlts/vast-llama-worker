@@ -382,10 +382,9 @@ def llm_workload(payload: dict) -> float:
                 if part.get("type") == "text":
                     prompt_tokens += len(part.get("text", "")) / 4.0
 
-    max_tokens = float(payload.get("max_tokens", 100))
+    max_tokens = float(payload.get("max_tokens", 512))
 
-    #return prompt_tokens + max_tokens
-    return 2048
+    return prompt_tokens + max_tokens
 
 
 worker_config = WorkerConfig(
