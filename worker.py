@@ -364,11 +364,6 @@ def completions_benchmark_generator() -> dict:
     }
 
 
-def llm_request_parser(payload: dict) -> dict:
-    payload.setdefault("max_tokens", 100)
-    return payload
-
-
 # --- Worker configuration -----------------------------------------------------
 
 def llm_workload(payload: dict) -> float:
@@ -402,7 +397,6 @@ worker_config = WorkerConfig(
         HandlerConfig(
             route="/v1/completions",
             workload_calculator=llm_workload,
-            request_parser=llm_request_parser,
             allow_parallel_requests=True,
             max_queue_time=60.0,
             benchmark_config=BenchmarkConfig(
@@ -415,7 +409,6 @@ worker_config = WorkerConfig(
         # /v1/chat/completions: similar behavior but no benchmark_config
         HandlerConfig(
             route="/v1/chat/completions",
-            request_parser=llm_request_parser,
             workload_calculator=llm_workload,
             allow_parallel_requests=True,
             max_queue_time=60.0
