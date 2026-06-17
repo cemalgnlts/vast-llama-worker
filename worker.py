@@ -384,7 +384,8 @@ def llm_workload(payload: dict) -> float:
 
     max_tokens = float(payload.get("max_tokens", 100))
 
-    return prompt_tokens + max_tokens
+    #return prompt_tokens + max_tokens
+    return 2048
 
 
 worker_config = WorkerConfig(
