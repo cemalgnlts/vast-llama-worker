@@ -16,7 +16,6 @@ MODEL_SERVER_PORT = int(os.getenv("LLAMA_ARG_PORT", 5000))
 MODEL_LOG_FILE    = os.getenv("MODEL_LOG", "/var/log/model.log")
 MODEL_HEALTHCHECK_ENDPOINT = "/health"
 N_SLOTS = int(os.getenv("LLAMA_ARG_N_PARALLEL", 4))
-WORKLOAD_PER_REQ = float(os.getenv("WORKLOAD_PER_REQ", 25.0))
 
 # llama-specific log messages
 MODEL_LOAD_LOG_MSG = [
@@ -30,7 +29,8 @@ MODEL_ERROR_LOG_MSGS = [
     "llama_server: exiting due to model loading error",
     "llama_model_load_from_file_impl: failed to load model",
     "CUDA error: CUDA-capable device(s) is/are busy or unavailable",
-    "ggml_cuda_init: failed to initialize CUDA: forward compatibility was attempted on non supported HW"
+    "ggml_cuda_init: failed to initialize CUDA: forward compatibility was attempted on non supported HW",
+    "common_fit_params: encountered an error while trying to fit params to free device memory: failed to create llama_context from model"
 ]
 
 MODEL_INFO_LOG_MSGS = [
@@ -360,7 +360,7 @@ def completions_benchmark_generator() -> dict:
     return {
         "model": model,
         "prompt": prompt,
-        "max_tokens": 256,
+        "max_tokens": 512,
     }
 
 
@@ -398,7 +398,7 @@ worker_config = WorkerConfig(
             route="/v1/completions",
             workload_calculator=llm_workload,
             allow_parallel_requests=True,
-            max_queue_time=60.0,
+            max_queue_time=90.0,
             benchmark_config=BenchmarkConfig(
                 generator=completions_benchmark_generator,
                 concurrency=N_SLOTS,
@@ -411,7 +411,7 @@ worker_config = WorkerConfig(
             route="/v1/chat/completions",
             workload_calculator=llm_workload,
             allow_parallel_requests=True,
-            max_queue_time=60.0
+            max_queue_time=90.0
         ),
     ],
 
