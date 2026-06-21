@@ -35,9 +35,7 @@ MODEL_ERROR_LOG_MSGS = [
 
 MODEL_INFO_LOG_MSGS = [
     "llama_server: loading model",
-    "load_model: speculative decoding will use checkpoints",
     "update_slots: all slots are idle",
-    "slot print_timing"
 ]
 
 # --- Benchmark data generation -----------------------------------------------
@@ -360,7 +358,7 @@ def completions_benchmark_generator() -> dict:
     return {
         "model": model,
         "prompt": prompt,
-        "max_tokens": 512,
+        "max_tokens": 512
     }
 
 
