@@ -30,7 +30,8 @@ MODEL_ERROR_LOG_MSGS = [
     "llama_model_load_from_file_impl: failed to load model",
     "CUDA error: CUDA-capable device(s) is/are busy or unavailable",
     "ggml_cuda_init: failed to initialize CUDA: forward compatibility was attempted on non supported HW",
-    "common_fit_params: encountered an error while trying to fit params to free device memory: failed to create llama_context from model"
+    "common_fit_params: encountered an error while trying to fit params to free device memory: failed to create llama_context from model",
+    "failed to download model from Hugging Face"
 ]
 
 MODEL_INFO_LOG_MSGS = [
