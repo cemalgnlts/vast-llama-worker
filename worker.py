@@ -36,11 +36,10 @@ MODEL_ERROR_LOG_MSGS = [
 
 MODEL_INFO_LOG_MSGS = [
     "init:",
-    "- CUDA0",
+    "- CUDA",
     "system_info:",
     "llama_server: loading model",
     "update_slots: all slots are idle",
-    "prompt eval time =",
     "eval time ="
 ]
 
